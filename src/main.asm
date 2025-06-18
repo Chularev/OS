@@ -1,66 +1,18 @@
 org 0x7C00
 bits 16
 
-
-%define ENDL 0x0D, 0x0A
-
-
-start:
-    jmp main
-
-
-;
-; Prints a string to the screen
-; Params:
-;   - ds:si points to string
-;
-puts:
-    ; save registers we will modify
-    push si
-    push ax
-    push bx
-
-.loop:
-    lodsb               ; loads next character in al
-    or al, al           ; verify if next character is null?
-    jz .done
-
-    mov ah, 0x0E        ; call bios interrupt
-    mov bh, 0           ; set page number to 0
+mov si, message   ; SI points to string
+print_loop:
+    lodsb         ; Load AL from [SI] and increment SI
+    cmp al, 0     ; Check for null terminator
+    je done
+    mov ah, 0x0E
     int 0x10
-
-    jmp .loop
-
-.done:
-    pop bx
-    pop ax
-    pop si    
-    ret
-    
-
-main:
-    ; setup data segments
-    mov ax, 0           ; can't set ds/es directly
-    mov ds, ax
-    mov es, ax
-    
-    ; setup stack
-    mov ss, ax
-    mov sp, 0x7C00      ; stack grows downwards from where we are loaded in memory
-
-    ; print hello world message
-    mov si, msg_hello
-    call puts
-
+    jmp print_loop
+done:
     hlt
 
-.halt:
-    jmp .halt
-
-
-
-msg_hello: db 'Hello world!', ENDL, 0
-
+message db 'SashaOS srart!', 0
 
 times 510-($-$$) db 0
 dw 0AA55h
