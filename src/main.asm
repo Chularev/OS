@@ -17,9 +17,30 @@ _start:
 
     cli
 
-    mov word [ds:0x1C*4], print    ; Set handler OFFSET
+    mov word [ds:0x1C*4], timer_isr    ; Set handler OFFSET
     mov [ds:0x1C*4+2], cs          ; Set handler SEGMENT (CS)
     sti                   ; Re-enable interrupts
+
+    hlt
+
+timer_isr:
+    pusha                   ; Save all registers
+    push ds                 ; Save DS (BIOS may modify it)
+    
+    inc word [tick_count]   ; Increment tick counter
+    
+    cmp word [tick_count], 18  ; About 1 second (18.2 ticks/sec)
+    jb .end_isr
+    
+    ; Reset counter and print
+    mov word [tick_count], 0
+    call print
+    
+.end_isr:
+    pop ds                  ; Restore DS
+    popa                    ; Restore all registers
+    iret                    ; Proper interrupt return
+
 
 print:
     push ax
@@ -41,7 +62,7 @@ print:
         pop bx
         pop si
         pop ax
-        iret
+        ret
 
 msg db "1 second passed!", ENDL, 0
 
