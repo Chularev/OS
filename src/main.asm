@@ -41,9 +41,9 @@ print:
         jmp .loop
 
     .done:
-        pop ax
-        pop si
         pop bx
+        pop si
+        pop ax
         ret
 
 msg db "1 second passed!", ENDL, 0
