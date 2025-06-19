@@ -17,12 +17,14 @@ _start:
 
     cli
 
-    mov word [ds:0x1C*4], timer_isr    ; Set handler OFFSET
-    mov [ds:0x1C*4+2], cs              ; Set handler SEGMENT (CS)
+    mov word [ds:0x1C*4], print    ; Set handler OFFSET
+    mov [ds:0x1C*4+2], cs          ; Set handler SEGMENT (CS)
     sti                   ; Re-enable interrupts
 
 ; INT 1Ch handler (called ~18.2 times/sec)
-timer_isr:
+
+
+print:
     push ax
     push si
     push bx
@@ -46,5 +48,6 @@ timer_isr:
 
 msg db "1 second passed!", ENDL, 0
 
+tick_count dw 0
 times 510-($-$$) db 0
 dw 0AA55h
