@@ -21,9 +21,6 @@ _start:
     mov [ds:0x1C*4+2], cs          ; Set handler SEGMENT (CS)
     sti                   ; Re-enable interrupts
 
-; INT 1Ch handler (called ~18.2 times/sec)
-
-
 print:
     push ax
     push si
@@ -44,7 +41,7 @@ print:
         pop bx
         pop si
         pop ax
-        ret
+        iret
 
 msg db "1 second passed!", ENDL, 0
 
