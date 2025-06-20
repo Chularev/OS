@@ -22,7 +22,7 @@ start:
     done:
         hlt
 
-message db 'SashaOS srart!', 0
+message db 'Kernel srart!', 0
 
 times 510-($-$$) db 0
 dw 0AA55h
