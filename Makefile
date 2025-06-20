@@ -3,10 +3,34 @@ ASM=nasm
 SRC_DIR=src
 BUILD_DIR=build
 
-$(BUILD_DIR)/sasha_floppy.img: $(BUILD_DIR)/main.bin
-	cp $(BUILD_DIR)/main.bin $(BUILD_DIR)/sasha_floppy.img
-	truncate -s 1440k $(BUILD_DIR)/sasha_floppy.img
-	
-$(BUILD_DIR)/main.bin: $(SRC_DIR)/main.asm
+.PHONY: all kernel bootloader clean always
+
+
+
+#
+# Bootloader
+#
+bootloader: $(BUILD_DIR)/bootloader.bin
+
+$(BUILD_DIR)/bootloader.bin: always
+	$(ASM) $(SRC_DIR)/bootloader/boot.asm -f bin -o $(BUILD_DIR)/bootloader.bin
+
+#
+# Kernel
+#
+kernel: $(BUILD_DIR)/kernel.bin
+
+$(BUILD_DIR)/kernel.bin: always
+	$(ASM) $(SRC_DIR)/kernel/main.asm -f bin -o $(BUILD_DIR)/kernel.bin
+
+#
+# Always
+#
+always:
 	mkdir -p $(BUILD_DIR)
-	$(ASM) $(SRC_DIR)/main.asm -f bin -o $(BUILD_DIR)/main.bin
+
+#
+# Clean
+#
+clean:
+	rm -rf $(BUILD_DIR)/*
